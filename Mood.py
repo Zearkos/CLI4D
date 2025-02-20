@@ -28,6 +28,7 @@ def net_traits():
     print("Net " + joy_misery +  " is " + str(mood_net1))
     print("Net " + passion_doubt + " is " + str(mood_net2))
 
+#   The part that *Actually* calculates the mood
 def mood_calculate():
     global mood_final
     if mood_net1 == mood_net2:
@@ -35,10 +36,11 @@ def mood_calculate():
     elif (mood_net1 + mood_net2) < 2:
         mood_final = "Neutral"
     elif (mood_net1 > 1) and joy_misery == "Joy":
-        mood_positive()
+        mood_positive() #  Broken into sub-functions otherwise it'd get messy with recursive if/else statements.
     else:
         mood_negative()
 
+#   Second part of the flowpath, right side.
 def mood_positive():
     global mood_final
     if mood_net2 == 0:
@@ -49,7 +51,7 @@ def mood_positive():
         mood_final = "Shy"
     else:
         mood_final = "Anxious"
-
+#   Second part of the flowpath, left side.
 def mood_negative():
     global mood_final
     if (joy_misery == "Misery") and (mood_net1 < 1):

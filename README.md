@@ -11,6 +11,7 @@ Additionally, a state called "emotional shutdown" can occur if the value of any 
 I am intending this mood change to be done WITHOUT forcing an "emotional shutdown" and starting with a fresh slate as much as possible.
 
 This project is planned to occur in 3 phases:
+
 Phase 1: Replicate and proof the logic for calculating CLI4D's mood.
 
 Phase 2: Implementing the XPs that are available to use for mood conditioning.

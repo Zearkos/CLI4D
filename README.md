@@ -12,7 +12,9 @@ I am intending this mood change to be done WITHOUT forcing an "emotional shutdow
 
 This project is planned to occur in 3 phases:
 Phase 1: Replicate and proof the logic for calculating CLI4D's mood.
+
 Phase 2: Implementing the XPs that are available to use for mood conditioning.
+
 Phase 3: Implement a pathing solution for the most efficient path from mood A to mood B.  (Possibly BFS?)
 
 More phases to come when I (inevitably) find out this is going to take more work than previously thought.

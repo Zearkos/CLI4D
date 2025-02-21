@@ -13,7 +13,7 @@ def bath():
 def food():
     global trait
     trait.joy += 2
-    trait.doubt = += 1
+    trait.doubt += 1
     if (trait.joy) or (trait.misery) or (trait.passion) or (trait.doubt) > 5:
         mood_final = "Emotional Shutdown"
     else:

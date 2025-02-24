@@ -1,75 +1,76 @@
-#   Shortening the print statement, probably not needed later.
-def print_mood():
-    print("CLI4D should be " + mood_final)
+from utils.xp_modules import bath, food, cat, nature, hangover, rain, death, stress
+from utils.class_trait import aibot
+import copy
 
-#  Defining the Mood attributes from CLI4D
-class trait:
-    def __init__(self, joy, misery, passion, doubt):
-        self.joy = joy
-        self.misery = misery
-        self.passion = passion
-        self.doubt = doubt
-
-#  Defining Net Mood attributes for FlowPath
-def net_traits(): 
-    global joy_misery, passion_doubt, mood_net1, mood_net2
-    if trait.joy >= trait.misery:
-        mood_net1 = trait.joy - trait.misery
-        joy_misery = str("Joy")
-    else: 
-        mood_net1 = trait.misery - trait.joy
-        joy_misery = str("Misery")
-    if trait.passion >= trait.doubt:
-        mood_net2 = trait.passion - trait.doubt
-        passion_doubt = str("Passion")
-    else: 
-        mood_net2 = trait.doubt - trait.passion
-        passion_doubt = str("Doubt")
-    print("Net " + joy_misery +  " is " + str(mood_net1))
-    print("Net " + passion_doubt + " is " + str(mood_net2))
+#   Prints the mood, might not be needed.
+def print_mood(ai):
+       print("CLI4D should be " + ai.mood)
 
 #   The part that *Actually* calculates the mood
-def mood_calculate():
-    global mood_final
-    if mood_net1 == mood_net2:
-        mood_final = "Bored"
-    elif (mood_net1 + mood_net2) < 2:
-        mood_final = "Neutral"
-    elif (mood_net1 > 1) and joy_misery == "Joy":
-        mood_positive() #  Broken into sub-functions otherwise it'd get messy with recursive if/else statements.
+def mood_calculate(ai):
+    if ai.net1 == ai.net2:
+        ai.mood = "Bored"
+    elif (ai.net1 + ai.net2) < 2:
+        ai.mood = "Neutral"
+    elif (ai.net1 > 1) and ai.net1 == "Joy":
+        mood_positive(ai) #  Broken into sub-functions otherwise it'd get messy with recursive if/else statements.
     else:
-        mood_negative()
+        mood_negative(ai)
 
 #   Second part of the flowpath, right side.
-def mood_positive():
-    global mood_final
-    if mood_net2 == 0:
-        mood_final = "Happy"
-    elif (passion_doubt == "Passion") and (mood_net2 > 1):
-        mood_final = "Love"
-    elif (passion_doubt == "Doubt") and (mood_net2 > 0):
-        mood_final = "Shy"
+def mood_positive(ai):
+    if ai.net2 == 0:
+        ai.mood = "Happy"
+    elif (ai.passion_doubt == "Passion") and (ai.net2 > 1):
+        ai.mood = "Love"
+    elif (ai.passion_doubt == "Doubt") and (ai.net2 > 0):
+        ai.mood = "Shy"
     else:
-        mood_final = "Anxious"
+        ai.mood = "Anxious"
 #   Second part of the flowpath, left side.
-def mood_negative():
-    global mood_final
-    if (joy_misery == "Misery") and (mood_net1 < 1):
-        mood_final = "Anxious"
-    elif (trait.passion + trait.doubt) < 2:
-        mood_final = "Sad"
-    elif (passion_doubt == "Passion") and (mood_net2 > 1):
-        mood_final = "Angry"
-    elif (passion_doubt == "Doubt") and (mood_net2 > 1):
-        mood_final = "Scared"
+def mood_negative(ai):
+    if (ai.joy_misery == "Misery") and (ai.net1 < 1):
+        ai.mood = "Anxious"
+    elif (ai.passion + ai.doubt) < 2:
+        ai.mood = "Sad"
+    elif (ai.passion_doubt == "Passion") and (ai.net2 > 1):
+        ai.mood = "Angry"
+    elif (ai.passion_doubt == "Doubt") and (ai.net2 > 1):
+        ai.mood = "Scared"
     else:
-        mood_final = "Anxious"
+        ai.mood = "Anxious"
 
-#    Receiving inputs from user for CLI4D's mood
-mood_input = input("What is CLI4D's Current Mood (separated by spaces)? ")
-trait_array = mood_input.split()
-trait = trait(int(trait_array[0]), int(trait_array[1]), int(trait_array[2]), int(trait_array[3]))
+    #  Defining Net Trait attributes for FlowPath
+def net_traits(ai):
+    if ai.joy >= ai.misery:
+        ai.net1 = ai.joy - ai.misery
+        ai.joy_misery = str("Joy")
+    else: 
+        ai.net1 = ai.misery - ai.joy
+        ai.joy_misery = str("Misery")
+        
+    if ai.passion >= ai.doubt:
+        ai.net2 = ai.passion - ai.doubt
+        ai.passion_doubt = str("Passion")
+    else: 
+        ai.net2 = ai.doubt - ai.passion
+        ai.passion_doubt = str("Doubt")
+        
+    print("Net " + ai.joy_misery +  " is " + str(ai.net1))
+    print("Net " + ai.passion_doubt + " is " + str(ai.net2))
 
-net_traits()
-mood_calculate()
-print_mood()
+    # Setup CLI4D's initial values
+def setup():
+    global trait_array, mood_input, aistart
+    mood_input = input("What is CLI4D's Current Mood (separated by spaces)? ") #    Receiving inputs from user for CLI4D's mood
+    trait_array = mood_input.split()
+    aistart = aibot(int(trait_array[0]), int(trait_array[1]), int(trait_array[2]), int(trait_array[3]))
+    net_traits(aistart)
+    mood_calculate(aistart)
+
+setup()
+print_mood(aistart)
+
+###   THIS IS WHERE THE COMPLEX SHIT WILL PROBABLY START   ###
+
+#xp_list = [bath(), food(), cat(), nature(), hangover(), rain(), death(), stress()]

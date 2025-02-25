@@ -1,7 +1,7 @@
 #from .calculate import mood_calculate
 #  Defining the Mood attributes from CLI4D
 class aibot:
-    def __init__(self, joy, misery, passion, doubt):
+    def __init__(self, joy, misery, passion, doubt, name='CLI4D'):
         self.joy = joy
         self.misery = misery
         self.passion = passion
@@ -11,4 +11,4 @@ class aibot:
         self.net1 = int(0)
         self.net2 = int(0)
         self.mood = ""
-
+        self.name = name

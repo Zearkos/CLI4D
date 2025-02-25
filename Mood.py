@@ -1,6 +1,5 @@
 from utils.xp_modules import bath, food, cat, nature, hangover, rain, death, stress
 from utils.class_trait import aibot
-import copy
 
 #   Prints the mood, might not be needed.
 def print_mood(ai):
@@ -8,12 +7,12 @@ def print_mood(ai):
 
 #   The part that *Actually* calculates the mood
 def mood_calculate(ai):
-    if ai.net1 == ai.net2:
+    if ((ai.net1 == 0) and (ai.net2 == 0)):
         ai.mood = "Bored"
-    elif (ai.net1 + ai.net2) < 2:
+    elif ((ai.net1 + ai.net2) < 2):
         ai.mood = "Neutral"
-    elif (ai.net1 > 1) and ai.net1 == "Joy":
-        mood_positive(ai) #  Broken into sub-functions otherwise it'd get messy with recursive if/else statements.
+    elif ((ai.net1 > 1) and (ai.joy_misery == "Joy")): #  Broken into sub-functions otherwise it'd get messy with the if/else statements.
+        mood_positive(ai) 
     else:
         mood_negative(ai)
 
@@ -29,18 +28,19 @@ def mood_positive(ai):
         ai.mood = "Anxious"
 #   Second part of the flowpath, left side.
 def mood_negative(ai):
-    if (ai.joy_misery == "Misery") and (ai.net1 < 1):
-        ai.mood = "Anxious"
-    elif (ai.passion + ai.doubt) < 2:
-        ai.mood = "Sad"
-    elif (ai.passion_doubt == "Passion") and (ai.net2 > 1):
-        ai.mood = "Angry"
-    elif (ai.passion_doubt == "Doubt") and (ai.net2 > 1):
-        ai.mood = "Scared"
+    if (ai.joy_misery == "Misery") and (ai.net1 <= 1):
+        ai.mood = "Anxious"    
     else:
-        ai.mood = "Anxious"
+        if (ai.net2 < 2):
+            ai.mood = "Sad"
+        elif (ai.passion_doubt == "Passion") and (ai.net2 > 1):
+            ai.mood = "Angry"
+        elif (ai.passion_doubt == "Doubt") and (ai.net2 > 1):
+            ai.mood = "Scared"
+        else:
+            ai.mood = "Anxious"
 
-    #  Defining Net Trait attributes for FlowPath
+    #  Defining Net Trait attributes needed for FlowPath
 def net_traits(ai):
     if ai.joy >= ai.misery:
         ai.net1 = ai.joy - ai.misery
@@ -55,22 +55,45 @@ def net_traits(ai):
     else: 
         ai.net2 = ai.doubt - ai.passion
         ai.passion_doubt = str("Doubt")
-        
+
+    # Pretty prints the net values.        
+def traits_print(ai):
     print("Net " + ai.joy_misery +  " is " + str(ai.net1))
     print("Net " + ai.passion_doubt + " is " + str(ai.net2))
 
-    # Setup CLI4D's initial values
+    # Setup for CLI4D's initial values
 def setup():
     global trait_array, mood_input, aistart
     mood_input = input("What is CLI4D's Current Mood (separated by spaces)? ") #    Receiving inputs from user for CLI4D's mood
     trait_array = mood_input.split()
     aistart = aibot(int(trait_array[0]), int(trait_array[1]), int(trait_array[2]), int(trait_array[3]))
     net_traits(aistart)
+    traits_print(aistart)
     mood_calculate(aistart)
+    print_mood(aistart)
 
+
+
+    ############   THIS IS WHERE THE SCRIPT ACTUALLY STARTS  ###################
 setup()
-print_mood(aistart)
 
-###   THIS IS WHERE THE COMPLEX SHIT WILL PROBABLY START   ###
+#   First run of XPs
+xp_list = [bath, food, cat, nature, hangover, rain, death, stress]
+first_order = []
+requested = input("What mood do you need? ")
 
-#xp_list = [bath(), food(), cat(), nature(), hangover(), rain(), death(), stress()]
+
+for xp in xp_list:
+    ai1 = aibot(int(trait_array[0]), int(trait_array[1]), int(trait_array[2]), int(trait_array[3]), f'{xp.__name__}')
+    xp(ai1)
+    if ai1.mood != "Shutdown":
+        net_traits(ai1)
+        mood_calculate(ai1)
+    first_order.append(ai1)
+    #
+for bot in first_order:
+    if (bot.mood) == (requested.capitalize()):
+        print(f'PASS: Running {bot.name.upper()} will return: {bot.mood}.')
+    else:
+        # print('No Matches.')
+        print(f'Fail: Running {bot.name.upper()} will return: {bot.mood}.')
